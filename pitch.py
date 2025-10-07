@@ -1,5 +1,4 @@
 import librosa
-import crepe
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -66,37 +65,59 @@ class EnhancedPitchAnalyzer:
             return None
     
     def extract_pitch_features(self, audio):
-        """Enhanced pitch extraction with multiple methods and features"""
-        audio_pcm = (audio * 32768).astype("int16")
-        
-       
-        time, frequency, confidence, activation = crepe.predict(
-            audio_pcm, self.sr, viterbi=True, step_size=10  # 10ms steps
-        )
-        
-      
-        df = pd.DataFrame({
-            "Time (s)": time,
-            "Pitch (Hz)": frequency,
-            "Confidence": confidence
-        })
-        
-        
-        conf_threshold = max(0.7, np.percentile(df["Confidence"], 60))
-        df = df[df["Confidence"] > conf_threshold]
-        
-       
-        pitch_median = df["Pitch (Hz)"].median()
-        pitch_std = df["Pitch (Hz)"].std()
-        
-      
-        min_pitch = max(80, pitch_median - 3 * pitch_std)
-        max_pitch = min(1000, pitch_median + 3 * pitch_std)
-        
-        df = df[(df["Pitch (Hz)"] >= min_pitch) & (df["Pitch (Hz)"] <= max_pitch)]
-        
-        if df.empty:
-            return None, None
+        """Enhanced pitch extraction using librosa instead of CREPE"""
+        try:
+            # Use librosa's piptrack for pitch extraction
+            pitches, magnitudes = librosa.piptrack(y=audio, sr=self.sr, threshold=0.1, fmin=80, fmax=1000)
+            
+            # Extract the most prominent pitch at each time step
+            times = librosa.frames_to_time(np.arange(pitches.shape[1]), sr=self.sr, hop_length=512)
+            frequency = []
+            confidence = []
+            
+            for t in range(pitches.shape[1]):
+                index = magnitudes[:, t].argmax()
+                pitch = pitches[index, t]
+                
+                if pitch > 0:
+                    frequency.append(pitch)
+                    confidence.append(magnitudes[index, t])
+                else:
+                    # Use harmonic analysis as fallback
+                    f0 = librosa.yin(audio, fmin=80, fmax=1000, sr=self.sr, frame_length=2048, hop_length=512)
+                    if t < len(f0) and f0[t] > 0:
+                        frequency.append(f0[t])
+                        confidence.append(0.8)  # Default confidence for YIN
+                    else:
+                        frequency.append(0)
+                        confidence.append(0)
+            
+            # Create DataFrame
+            df = pd.DataFrame({
+                "Time (s)": times[:len(frequency)],
+                "Pitch (Hz)": frequency,
+                "Confidence": confidence
+            })
+            
+            # Filter by confidence
+            conf_threshold = max(0.5, np.percentile(df["Confidence"], 50))  # Lowered for librosa
+            df = df[df["Confidence"] > conf_threshold]
+            
+            # Remove zero pitches
+            df = df[df["Pitch (Hz)"] > 0]
+            
+            # Outlier removal
+            if not df.empty:
+                pitch_median = df["Pitch (Hz)"].median()
+                pitch_std = df["Pitch (Hz)"].std()
+                
+                min_pitch = max(80, pitch_median - 3 * pitch_std)
+                max_pitch = min(1000, pitch_median + 3 * pitch_std)
+                
+                df = df[(df["Pitch (Hz)"] >= min_pitch) & (df["Pitch (Hz)"] <= max_pitch)]
+            
+            if df.empty:
+                return None, None
         
       
         Q1 = df["Pitch (Hz)"].quantile(0.25)
