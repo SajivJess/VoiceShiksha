@@ -1,0 +1,107 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.env
+*.env
+
+# Flask
+instance/
+.webassets-cache
+
+# Audio files (uploads folder)
+uploads/*.wav
+uploads/*.webm
+uploads/*.mp3
+
+# Large model files
+*.h5
+*.pkl
+*.joblib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flutter
+VoiceShikshaFlutter/.dart_tool/
+VoiceShikshaFlutter/.flutter-plugins
+VoiceShikshaFlutter/.flutter-plugins-dependencies
+VoiceShikshaFlutter/.packages
+VoiceShikshaFlutter/.pub-cache/
+VoiceShikshaFlutter/.pub/
+VoiceShikshaFlutter/build/
+VoiceShikshaFlutter/flutter_*.png
+VoiceShikshaFlutter/flutter_*.log
+VoiceShikshaFlutter/.metadata
+
+# Android
+VoiceShikshaFlutter/android/**/gradle-wrapper.jar
+VoiceShikshaFlutter/android/.gradle
+VoiceShikshaFlutter/android/captures/
+VoiceShikshaFlutter/android/gradlew
+VoiceShikshaFlutter/android/gradlew.bat
+VoiceShikshaFlutter/android/local.properties
+VoiceShikshaFlutter/android/**/GeneratedPluginRegistrant.java
+VoiceShikshaFlutter/android/key.properties
+
+# iOS
+VoiceShikshaFlutter/ios/**/dgph
+VoiceShikshaFlutter/ios/**/.symlinks/
+VoiceShikshaFlutter/ios/**/profile
+VoiceShikshaFlutter/ios/**/xcuserdata
+VoiceShikshaFlutter/ios/.generated/
+VoiceShikshaFlutter/ios/Flutter/App.framework
+VoiceShikshaFlutter/ios/Flutter/Flutter.framework
+VoiceShikshaFlutter/ios/Flutter/Generated.xcconfig
+VoiceShikshaFlutter/ios/Flutter/ephemeral/
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Keep important audio samples but ignore large files
+uploads/
+!uploads/.gitkeep
+
+# Keep data structure but ignore large datasets
+!data/*.mpeg

@@ -1,0 +1,32 @@
+name: voice_shiksha_flutter
+description: Voice Shiksha - Empowering speech practice for kids through voice and pitch recognition.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^1.1.0
+  path_provider: ^2.1.1
+  record: ^6.1.2
+  audioplayers: ^5.2.1
+  dio: ^5.3.2
+  flutter_svg: ^2.0.9
+  lottie: ^2.7.0
+  flutter_tts: ^4.0.2
+  permission_handler: ^11.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/audio/
