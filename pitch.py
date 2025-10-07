@@ -118,19 +118,23 @@ class EnhancedPitchAnalyzer:
             
             if df.empty:
                 return None, None
-        
-      
-        Q1 = df["Pitch (Hz)"].quantile(0.25)
-        Q3 = df["Pitch (Hz)"].quantile(0.75)
-        IQR = Q3 - Q1
-        lower_bound = Q1 - 1.5 * IQR
-        upper_bound = Q3 + 1.5 * IQR
-        df = df[(df["Pitch (Hz)"] >= lower_bound) & (df["Pitch (Hz)"] <= upper_bound)]
-        
-       
-        df["Pitch (Hz)"] = signal.medfilt(df["Pitch (Hz)"], kernel_size=5)
-        
-        return df, self._extract_advanced_features(df)
+            
+            # IQR-based outlier removal
+            Q1 = df["Pitch (Hz)"].quantile(0.25)
+            Q3 = df["Pitch (Hz)"].quantile(0.75)
+            IQR = Q3 - Q1
+            lower_bound = Q1 - 1.5 * IQR
+            upper_bound = Q3 + 1.5 * IQR
+            df = df[(df["Pitch (Hz)"] >= lower_bound) & (df["Pitch (Hz)"] <= upper_bound)]
+            
+            # Apply median filter for smoothing
+            df["Pitch (Hz)"] = signal.medfilt(df["Pitch (Hz)"], kernel_size=5)
+            
+            return df, self._extract_advanced_features(df)
+            
+        except Exception as e:
+            print(f"❌ Error in pitch extraction: {e}")
+            return None, None
     
     def _extract_advanced_features(self, df):
         """Extract comprehensive pitch features"""
